@@ -44,19 +44,27 @@ const server = new McpServer({
   version: "1.0.0",
 });
 
-server.tool(
+server.registerTool(
   "search_customers",
-  "Find customers by name or email. Use this to identify people involved in payment issues.",
-  { query: z.string().describe("Name or email fragment") },
+  {
+    description:
+      "Find customers by name or email. Use this to identify people involved in payment issues.",
+    inputSchema: { query: z.string().describe("Name or email fragment") },
+    annotations: { readOnlyHint: true },
+  },
   async ({ query }) => text(await api(`/customers?query=${encodeURIComponent(query)}`)),
 );
 
-server.tool(
+server.registerTool(
   "search_orders",
-  "Search orders. Filter by customer and status when investigating charges.",
   {
-    customerId: z.string().optional().describe("Customer UUID"),
-    status: z.enum(["pending", "completed", "cancelled"]).optional(),
+    description:
+      "Search orders. Filter by customer and status when investigating charges.",
+    inputSchema: {
+      customerId: z.string().optional().describe("Customer UUID"),
+      status: z.enum(["pending", "completed", "cancelled"]).optional(),
+    },
+    annotations: { readOnlyHint: true },
   },
   async ({ customerId, status }) => {
     const params = new URLSearchParams();
@@ -67,13 +75,17 @@ server.tool(
   },
 );
 
-server.tool(
+server.registerTool(
   "search_payments",
-  "Search payment records. Filter by customer, order, or status. Duplicate completed payments on the same order are the incident.",
   {
-    customerId: z.string().optional().describe("Customer UUID"),
-    orderId: z.string().optional().describe("Order UUID"),
-    status: z.enum(["pending", "completed", "failed", "refunded"]).optional(),
+    description:
+      "Search payment records. Filter by customer, order, or status. Duplicate completed payments on the same order are the incident.",
+    inputSchema: {
+      customerId: z.string().optional().describe("Customer UUID"),
+      orderId: z.string().optional().describe("Order UUID"),
+      status: z.enum(["pending", "completed", "failed", "refunded"]).optional(),
+    },
+    annotations: { readOnlyHint: true },
   },
   async ({ customerId, orderId, status }) => {
     const params = new URLSearchParams();
@@ -85,22 +97,31 @@ server.tool(
   },
 );
 
-server.tool(
+server.registerTool(
   "search_tickets",
-  "Search customer support tickets by subject or description.",
-  { query: z.string().describe("Ticket text, for example 'charged twice'") },
+  {
+    description: "Search customer support tickets by subject or description.",
+    inputSchema: {
+      query: z.string().describe("Ticket text, for example 'charged twice'"),
+    },
+    annotations: { readOnlyHint: true },
+  },
   async ({ query }) => text(await api(`/tickets?query=${encodeURIComponent(query)}`)),
 );
 
-server.tool(
+server.registerTool(
   "refund_payment",
-  "Refund a completed payment. This changes application data. Call once without confirm to preview, then again with confirm=true after the user agrees.",
   {
-    paymentId: z.string().describe("Payment UUID to refund"),
-    confirm: z
-      .boolean()
-      .optional()
-      .describe("Must be true to perform the refund"),
+    description:
+      "Refund a completed payment. This changes application data. Call once without confirm to preview, then again with confirm=true after the user agrees.",
+    inputSchema: {
+      paymentId: z.string().describe("Payment UUID to refund"),
+      confirm: z
+        .boolean()
+        .optional()
+        .describe("Must be true to perform the refund"),
+    },
+    annotations: { readOnlyHint: false, destructiveHint: true },
   },
   async ({ paymentId, confirm }) => {
     const payment = await api<Payment>(`/payments/${paymentId}`);
