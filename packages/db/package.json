@@ -1,0 +1,26 @@
+{
+  "name": "@repo/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "bun run src/migrate.ts",
+    "seed": "bun run src/seed.ts",
+    "reset": "bun run src/reset.ts",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "postgres": "^3.4.8"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/node": "26.4.1",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "7.0.2"
+  }
+}
