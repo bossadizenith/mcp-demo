@@ -1,5 +1,6 @@
 import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
+import { Button as ShadcnButton } from "@repo/ui/components/button";
 import styles from "./page.module.css";
 
 type Props = Omit<ImageProps, "src"> & {
@@ -66,6 +67,7 @@ export default function Home() {
         <Button appName="web" className={styles.secondary}>
           Open alert
         </Button>
+        <ShadcnButton className="self-start">shadcn button</ShadcnButton>
       </main>
       <footer className={styles.footer}>
         <a
