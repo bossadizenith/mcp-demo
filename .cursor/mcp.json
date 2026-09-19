@@ -1,8 +1,14 @@
 {
   "mcpServers": {
     "incido": {
+      "type": "stdio",
       "command": "bun",
-      "args": ["run", "--cwd", "packages/mcp", "src/index.ts"],
+      "args": [
+        "run",
+        "--cwd",
+        "${workspaceFolder}/packages/mcp",
+        "src/index.ts"
+      ],
       "env": {
         "API_URL": "http://localhost:4000"
       }
